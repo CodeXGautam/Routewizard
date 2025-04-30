@@ -1,14 +1,14 @@
 {
   "files": {
-    "main.css": "/CodeXGautam/Routewizard.git/static/css/main.8f5cae11.css",
-    "main.js": "/CodeXGautam/Routewizard.git/static/js/main.e13e920d.js",
-    "static/media/congestion.png": "/CodeXGautam/Routewizard.git/static/media/congestion.8f4b62704a4b886e870e.png",
-    "index.html": "/CodeXGautam/Routewizard.git/index.html",
-    "main.8f5cae11.css.map": "/CodeXGautam/Routewizard.git/static/css/main.8f5cae11.css.map",
-    "main.e13e920d.js.map": "/CodeXGautam/Routewizard.git/static/js/main.e13e920d.js.map"
+    "main.css": "/Routewizard/static/css/main.8f5cae11.css",
+    "main.js": "/Routewizard/static/js/main.eb811ead.js",
+    "static/media/congestion.png": "/Routewizard/static/media/congestion.8f4b62704a4b886e870e.png",
+    "index.html": "/Routewizard/index.html",
+    "main.8f5cae11.css.map": "/Routewizard/static/css/main.8f5cae11.css.map",
+    "main.eb811ead.js.map": "/Routewizard/static/js/main.eb811ead.js.map"
   },
   "entrypoints": [
     "static/css/main.8f5cae11.css",
-    "static/js/main.e13e920d.js"
+    "static/js/main.eb811ead.js"
   ]
 }
