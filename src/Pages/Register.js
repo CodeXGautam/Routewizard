@@ -143,34 +143,34 @@ const Register = (props) => {
 
                     <span className="flex gap-4">
                         <label className="text-gray-800 text-sm flex flex-col gap-2">First Name
-                            <input type="text" required onChange={changeHandler} name="firstName" id="firstName" value={registerData.firstName}
+                            <input type="text" onChange={changeHandler} name="firstName" id="firstName" value={registerData.firstName}
                                 className="text-gray-900 border-2 border-gray-600 p-2 rounded-md" />
                         </label>
 
                         <label className="text-gray-800 text-sm flex flex-col gap-2">Last Name
-                            <input type="text" required onChange={changeHandler} name="lastName" id="lastName" value={registerData.lastName}
+                            <input type="text" onChange={changeHandler} name="lastName" id="lastName" value={registerData.lastName}
                                 className="text-gray-900 border-2 border-gray-600 p-2 rounded-md" />
                         </label>
 
                     </span>
 
                     <label className="text-gray-800 text-sm flex flex-col gap-2">Username
-                        <input type="text" required onChange={changeHandler} name="userName" id="userName" value={registerData.userName}
+                        <input type="text" onChange={changeHandler} name="userName" id="userName" value={registerData.userName}
                             className="text-gray-900 border-2 border-gray-600 p-2 rounded-md" />
                     </label>
 
                     <label className="text-gray-800 text-sm flex flex-col gap-2">Email
-                        <input type="email" required onChange={changeHandler} name="email" id="email" value={registerData.email}
+                        <input type="email" onChange={changeHandler} name="email" id="email" value={registerData.email}
                             className="text-gray-900 border-2 border-gray-600 p-2 rounded-md" />
                     </label>
 
                     <label className="text-gray-800 text-sm flex flex-col gap-2">Password
-                        <input type="password" required onChange={changeHandler} name="password" id="password" value={registerData.password}
+                        <input type="password" onChange={changeHandler} name="password" id="password" value={registerData.password}
                             className="text-gray-900 border-2 border-gray-600 p-2 rounded-md" />
                     </label>
 
                     <label className="text-gray-800 text-sm flex flex-col gap-2">Confirm Password
-                        <input type="password" required onChange={changeHandler} name="confirmPassword" id="confirmPassword" value={registerData.confirmPassword}
+                        <input type="password" onChange={changeHandler} name="confirmPassword" id="confirmPassword" value={registerData.confirmPassword}
                             className="text-gray-900 border-2 border-gray-600 p-2 rounded-md" />
                     </label>
                     <span className="text-sm text-gray-800">Already have a account ? <NavLink to={'/login'} className="text-blue-400 font-semibold">Login</NavLink></span>
