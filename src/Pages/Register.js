@@ -38,6 +38,11 @@ const Register = (props) => {
             toast.error("Passwords do not match");
             return;
         }
+        if(!(registerData.firstName && registerData.lastName && registerData.userName && registerData.email && registerData.password && registerData.confirmPassword)) {
+            toast.error("All fields are required. Please fill in all fields.");
+            return;
+        }
+
         else {
             // Here you would typically send the registerData to your backend API
             // For example, using fetch or axios:
