@@ -15,6 +15,7 @@
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-geocode": "^2.0.1",
+    "react-hot-toast": "^2.5.2",
     "react-leaflet": "^5.0.0",
     "react-router": "^7.5.0",
     "react-router-dom": "^7.5.0",
@@ -29,7 +30,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
-  "deploy": "gh-pages -d build"
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
@@ -52,6 +53,5 @@
   "devDependencies": {
     "tailwindcss": "^3.4.17"
   },
-
-  "homepage": "https://github.com/CodeXGautam/Routewizard.git"
+  "homepage": "https://CodeXGautam.github.io/Routewizard"
 }
