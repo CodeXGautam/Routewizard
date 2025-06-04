@@ -5,7 +5,10 @@ import { toast } from "react-hot-toast";
 
 
 
+
 const Login = (props) => {
+
+    const url = 'http://localhost:4000/'
 
     const setLogin = props.setLogin;
 
@@ -26,24 +29,70 @@ const Login = (props) => {
     }
 
 
-    function submitHandler(event) {
+    const submitHandler = async (event) => {
         event.preventDefault();
+        console.log(loginData)
         if (loginData.email === "" || loginData.password === "") {
             toast.error("Please fill all the fields");
             return;
         }
 
         else {
-            toast.success("Login successful");
-            setLoginData({
-                email: "",
-                password: ""
-            });
+            // Here you would typically send the loginData to your backend API
+            // For example, using fetch or axios:
 
-            console.log(loginData);
-            console.log("Form submitted");
-            setLogin(true);
-            navigate('/home');
+             await fetch(`${url}api/login`, {
+                method: 'POST',  // // Adjust the URL to your backend endpoint   
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(loginData)
+            })
+                .then(response => response.json())
+                .then(response => {
+
+                    if(!response) {
+                        toast.error("Login failed. Please try again."); 
+                        return;
+                    }
+
+                    else if(response.message === "All fields are required"){
+                        toast.error("All fields are required. Please fill in all fields.");
+                        console.log('Error: ', response.message);
+                        return;
+                    }
+
+                    else if (response.message === "User not found") {
+                        toast.error("User not found. Please check your email or username."); 
+                        console.log('Error: ', response.message);
+                        return;
+                    }
+                    
+                    else if (response.message === "Invalid password") {
+                        toast.error("Invalid password. Please try again."); 
+                        console.log('Error: ', response.message);
+                        return;
+                    }
+
+                    else if (response.message === "Login successful") {
+                        toast.success("Login successful");
+                        setLogin(true);
+                        navigate('/home');
+                        setLoginData({
+                            email: "",
+                            password: ""
+                        });
+
+                    } else {
+                        toast.error("Login failed");
+                        console.error("Login failed:", response.message);
+                    }
+                })
+                .catch(error => {
+                    toast.error("An error occurred during login");
+                    console.error("Error during login:", error);
+                    
+                });
         }
 
     }
@@ -59,7 +108,7 @@ const Login = (props) => {
                     </div>
                     <form className="flex flex-col gap-4 w-[100%] mt-0" onSubmit={submitHandler}>
                         <input type="email" placeholder="Email / Username" value={loginData.email} id="email" name="email"
-                             className="text-gray-900 border-2 border-gray-600 p-2 rounded-md" onChange={changeHandler} />
+                            className="text-gray-900 border-2 border-gray-600 p-2 rounded-md" onChange={changeHandler} />
                         <input type="password" placeholder="Password" value={loginData.password} name="password" id="password"
                             className="text-gray-900 border-2 border-gray-600 p-2 rounded-md" onChange={changeHandler} />
                         <span className="text-sm text-gray-800">Do not have an account?

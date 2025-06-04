@@ -1,11 +1,15 @@
 import { NavLink, useNavigate } from "react-router";
 import image from '../images/imgroute.avif';
 import { useState } from "react";
-import toast from "react-hot-toast";
+import toast from "react-hot-toast"; 
+
 
 
 
 const Register = (props) => {
+
+
+    const url = 'http://localhost:4000/'; 
 
     const setLogin = props.setLogin;
     const navigate = useNavigate();
@@ -38,7 +42,7 @@ const Register = (props) => {
             toast.error("Passwords do not match");
             return;
         }
-        if(!(registerData.firstName && registerData.lastName && registerData.userName && registerData.email && registerData.password && registerData.confirmPassword)) {
+        if(!(registerData.firstName || registerData.lastName || registerData.userName || registerData.email || registerData.password || registerData.confirmPassword)) {
             toast.error("All fields are required. Please fill in all fields.");
             return;
         }
@@ -46,7 +50,7 @@ const Register = (props) => {
         else {
             // Here you would typically send the registerData to your backend API
             // For example, using fetch or axios:
-            await fetch('http://localhost:4000/register/api/register', {
+            await fetch(`${url}api/register`, {
                 method: 'POST',  // // Adjust the URL to your backend endpoint   
                 headers: {
                     'Content-Type': 'application/json'
