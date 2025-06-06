@@ -142,25 +142,24 @@ const Register = (props) => {
 
 
     return (
-        <div className="flex gap-10 w-[100%] h-[100%] overflow-hidden justify-center items-center p-4">
+        <div className="flex flex-col gap-10 w-[100%] justify-center items-center p-4 md:flex-row lg:flex-row sm:gap-6">
 
-            <div className="flex flex-col h-[100%] gap-6 w-[40%] rounded-lg p-10 justify-center shadow-lg">
+            <div className="flex flex-col gap-6 min-w-[300px] w-[70%] md:w-[45%] lg:w[45%] rounded-lg px-8  py-6 border-2 justify-center shadow-lg">
 
                 <h1 className="text-2xl flex text-gray-900">Register Now</h1>
 
-                <form className="flex flex-col gap-3 w-96" onSubmit={submitHandler}>
+                <form className="flex flex-col gap-3 w-[100%]" onSubmit={submitHandler}>
 
-                    <span className="flex gap-4">
-                        <label className="text-gray-800 text-sm flex flex-col gap-2">First Name
+                    <span className="flex flex-col gap-3 lg:flex-row lg:gap-4">
+                        <label className="text-gray-800 text-sm flex flex-col gap-2 w-[100%]">First Name
                             <input type="text" onChange={changeHandler} name="firstName" id="firstName" value={registerData.firstName}
                                 className="text-gray-900 border-2 border-gray-600 p-2 rounded-md" />
                         </label>
 
-                        <label className="text-gray-800 text-sm flex flex-col gap-2">Last Name
+                        <label className="text-gray-800 text-sm flex flex-col gap-2 w-[100%]">Last Name
                             <input type="text" onChange={changeHandler} name="lastName" id="lastName" value={registerData.lastName}
                                 className="text-gray-900 border-2 border-gray-600 p-2 rounded-md" />
                         </label>
-
                     </span>
 
                     <label className="text-gray-800 text-sm flex flex-col gap-2">Username
@@ -187,8 +186,8 @@ const Register = (props) => {
                 </form>
             </div>
 
-            <div className="w-[50%] h-[100%] flex items-center justify-center flex-col gap-4">
-                <h1 className="font-bold text-4xl flex justify-center text-slate-950">RouteWizard</h1>
+            <div className="w-[50%] h-[100%] flex items-center justify-center flex-col gap-4 hidden md:flex lg:flex">
+                <h1 className="font-bold hidden sm:flex sm:text-2xl md:text-3xl md:flex lg:flex lg:text-4xl justify-center text-slate-950">RouteWizard</h1>
                 <p className="text-md flex justify-center text-slate-950">Optimizing Movement. Enhancing Efficiency.</p>
                 <img src={image} alt="map" className="w-[90%]" />
             </div>
