@@ -107,7 +107,7 @@ const Login = (props) => {
                         <p className="text-gray-700 text-md">Hey, glad to see you back here</p>
                     </div>
                     <form className="flex flex-col gap-4 w-[100%] mt-0" onSubmit={submitHandler}>
-                        <input type="email" placeholder="Email / Username" value={loginData.email} id="email" name="email"
+                        <input type="email" placeholder="Email" value={loginData.email} id="email" name="email"
                             className="text-gray-900 border-2 border-gray-600 p-2 rounded-md" onChange={changeHandler} />
                         <input type="password" placeholder="Password" value={loginData.password} name="password" id="password"
                             className="text-gray-900 border-2 border-gray-600 p-2 rounded-md" onChange={changeHandler} />
