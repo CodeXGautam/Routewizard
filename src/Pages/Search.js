@@ -23,7 +23,7 @@ const FlyTo = ({ position }) => {
   const map = useMap();
   useEffect(() => {
     if (position) map.flyTo(position, 14);
-  }, [position]);
+  },[position, map]);
   return null;
 };
 

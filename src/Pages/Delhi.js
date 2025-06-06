@@ -19,12 +19,12 @@ const Delhi = () => {
     const [date, setDate] = useState('');
 
 
-    const url = api_url + `${date}` + ` ${timestamp.time}`
+    const url = `${api_url}${date} ${timestamp.time}`
     console.log(url);
 
     async function fetchdata() {
         try {
-            const output = await fetch(api_url + `${date}` + ` ${timestamp.time}`);
+            const output = await fetch(url);
             const data = await output.json();
             setCongestion(data.predicted_congestion_factor)
             setSpeed(data.predicted_current_speed)

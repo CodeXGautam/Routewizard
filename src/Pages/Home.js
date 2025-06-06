@@ -25,7 +25,8 @@ const Home = ({ city }) => {
 
             <div className='flex flex-col gap-20 w-[100%] sm:w-[40%] lg:w-[40%] md:w-[40%] justify-center items-center'>
                 <div className='flex flex-col mt-8 gap-4 items-center'>
-                    <h1 className='text-2xl sm:text-2xl md:text-2xl lg:text-2xl font-semibold font-bold'>Get your desired route </h1>
+                    <h1 className='text-2
+                    xl sm:text-2xl md:text-2xl lg:text-2xl font-semibold font-bold'>Get your desired route </h1>
                     <button className='rounded-full bg-blue-400 text-white p-2 font-semibold text-md
                         w-[220px] shadow-2xl hover:w-[240px] hover:p-2.5  hover:bg-blue-500 duration-[700ms]' onClick={clickHandler1}> Search Now </button>
                 </div>
