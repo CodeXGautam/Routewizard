@@ -49,7 +49,7 @@ const Start = ({ city, onDatachange }) => {
             <div className='w-[100%] h-screen relative overflow-hidden flex justify-center items-center'>
                 <WorldMap />
                 <div className='absolute flex flex-col gap-[15px] w-full justify-center items-center z-10'>
-                    <h1 className='text-4xl sm:text-5xl md:text-5xl lg:text-5xl font-bold flex justify-center items-center w-[100%]'>
+                    <h1 className='text-3xl sm:text-5xl md:text-5xl lg:text-5xl font-bold flex justify-center items-center w-[100%]'>
                         Welcome to RouteWizard
                     </h1>
                     <form className='flex flex-col gap-[10px] justify-center items-center w-[60%] min-w-[300px]' onSubmit={submitHandler}>
