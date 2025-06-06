@@ -30,7 +30,7 @@ const Dltraffic = () => {
         {/* Traffic flow overlay with dynamic key */}
         <TileLayer
           url={`https://api.tomtom.com/traffic/map/4/tile/flow/relative0/{z}/{x}/{y}.png?key=eBXfQnGsEtybJGPcFdG1VKTSBk8LCqIE&${trafficKey}`}
-          opacity={.95}
+          opacity={1}
         />
       </MapContainer>
 
