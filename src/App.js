@@ -30,7 +30,7 @@ function App() {
       <Routes>
         <Route path= '*' element={<Start city={city} onDatachange={handleChange} />}/>
         <Route path='/' element={<Start city={city} onDatachange={handleChange} />} />
-        <Route path='/register' element={<Register setLogin={setLogin}/>}/>
+        <Route path='/register' element={<Register setLogin={setLogin} />}/>
         <Route path='/login' element={<Login setLogin={setLogin}/>}/>
        { isloggedIn &&
         <Route path='/home' element={<Home  city={city}/>} /> 

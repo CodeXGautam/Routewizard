@@ -23,7 +23,7 @@ const FlyTo = ({ position }) => {
   const map = useMap();
   useEffect(() => {
     if (position) map.flyTo(position, 14);
-  },[position, map]);
+  }, [position, map]);
   return null;
 };
 
@@ -39,9 +39,24 @@ const nominatimGeocode = async (query) => {
   return null;
 };
 
-const Search= () => {
+const fetchSuggestions = async (query) => {
+  if (!query) return [];
+  const res = await axios.get("https://nominatim.openstreetmap.org/search", {
+    params: {
+      q: query,
+      format: "json",
+      addressdetails: 1,
+      limit: 5,
+    },
+  });
+  return res.data;
+};
+
+const Search = () => {
   const [startQuery, setStartQuery] = useState("");
   const [endQuery, setEndQuery] = useState("");
+  const [startSuggestions, setStartSuggestions] = useState([]);
+  const [endSuggestions, setEndSuggestions] = useState([]);
   const [startPoint, setStartPoint] = useState(null);
   const [endPoint, setEndPoint] = useState(null);
   const [route, setRoute] = useState([]);
@@ -52,7 +67,7 @@ const Search= () => {
   const [duration, setDuration] = useState(null);
   const [zoomLevel, setZoomLevel] = useState(14);
 
-  const mapRef = useRef(); // New ref to store map instance
+  const mapRef = useRef();
 
   const handleSubmit = async () => {
     const start = await nominatimGeocode(startQuery);
@@ -72,8 +87,15 @@ const Search= () => {
       const coords = path.points.coordinates.map(([lng, lat]) => [lat, lng]);
       setRoute(coords);
       setDistance((path.distance / 1000).toFixed(2));
-      setDuration((path.time / 60000).toFixed(1));
 
+      // Format duration nicely
+      const totalMs = path.time;
+      const hours = Math.floor(totalMs / (1000 * 60 * 60));
+      const minutes = Math.round((totalMs % (1000 * 60 * 60)) / (1000 * 60));
+      const formattedDuration = hours > 0 ? `${hours} hr ${minutes} min` : `${minutes} min`;
+      setDuration(formattedDuration);
+
+      // Traffic overlay
       if (routePref === "least_traffic" && mapRef.current) {
         const center = mapRef.current.getCenter();
         const z = zoomLevel;
@@ -84,8 +106,7 @@ const Search= () => {
               Math.tan((center.lat * Math.PI) / 180) +
               1 / Math.cos((center.lat * Math.PI) / 180)
             ) /
-            Math.PI) /
-          2 *
+            Math.PI) / 2 *
           Math.pow(2, z)
         );
         setTrafficTilesUrl(
@@ -109,37 +130,78 @@ const Search= () => {
     return () => clearInterval(interval);
   }, [routePref, trafficTilesUrl]);
 
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      fetchSuggestions(startQuery).then(setStartSuggestions);
+    }, 300);
+    return () => clearTimeout(delayDebounce);
+  }, [startQuery]);
+
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      fetchSuggestions(endQuery).then(setEndSuggestions);
+    }, 300);
+    return () => clearTimeout(delayDebounce);
+  }, [endQuery]);
+
   return (
-  <>    <div
-        style={{
-          padding: "1rem",
-          background: "white",
-          zIndex: 1000,
-          position: "absolute",
-          top: 50,
-          right: 10,
-          borderRadius: 8,
-          boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
-          maxWidth: 300,
-        }}
-      >
-        <input
-          placeholder="Start location"
-          value={startQuery}
-          onChange={(e) => setStartQuery(e.target.value)}
-          style={{ marginBottom: "0.5rem", padding: "0.5rem", width: "100%" }}
-        />
-        <input
-          placeholder="End location"
-          value={endQuery}
-          onChange={(e) => setEndQuery(e.target.value)}
-          style={{ marginBottom: "0.5rem", padding: "0.5rem", width: "100%" }}
-        />
+    <div className="relative w-[100%] h-screen overflow-hidden">
+      <div className="absolute top-[30px] right-[10px] z-[1000] bg-white p-4 rounded-lg shadow-lg max-w-[300px] w-[30%] min-w-[180px] overflow-hidden">
+        
+        <div className="">
+          <input
+            placeholder="Start location"
+            value={startQuery}
+            onChange={(e) => setStartQuery(e.target.value)}
+            className="mb-2 p-2 w-full border border-gray-300 rounded"
+          />
+          {startSuggestions.length > 0 && (
+            <ul className="absolute z-10 bg-white border w-full max-h-40 overflow-y-auto shadow">
+              {startSuggestions.map((s, idx) => (
+                <li
+                  key={idx}
+                  className="px-2 py-1 hover:bg-gray-200 cursor-pointer text-sm"
+                  onClick={() => {
+                    setStartQuery(s.display_name);
+                    setStartSuggestions([]);
+                  }}
+                >
+                  {s.display_name}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        <div className="relative">
+          <input
+            placeholder="End location"
+            value={endQuery}
+            onChange={(e) => setEndQuery(e.target.value)}
+            className="mb-2 p-2 w-full border border-gray-300 rounded"
+          />
+          {endSuggestions.length > 0 && (
+            <ul className="absolute z-10 bg-white border w-full max-h-40 overflow-y-auto shadow">
+              {endSuggestions.map((s, idx) => (
+                <li
+                  key={idx}
+                  className="px-2 py-1 hover:bg-gray-200 cursor-pointer text-sm"
+                  onClick={() => {
+                    setEndQuery(s.display_name);
+                    setEndSuggestions([]);
+                  }}
+                >
+                  {s.display_name}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
 
         <select
           value={vehicle}
           onChange={(e) => setVehicle(e.target.value)}
-          style={{ marginBottom: "0.5rem", padding: "0.5rem", width: "100%" }}
+          className="mb-2 p-2 w-full border border-gray-300 rounded"
         >
           <option value="car">Car</option>
           <option value="bike">Bike</option>
@@ -149,7 +211,7 @@ const Search= () => {
         <select
           value={routePref}
           onChange={(e) => setRoutePref(e.target.value)}
-          style={{ marginBottom: "0.5rem", padding: "0.5rem", width: "100%" }}
+          className="mb-2 p-2 w-full border border-gray-300 rounded"
         >
           <option value="fastest">Minimum Time</option>
           <option value="shortest">Minimum Distance</option>
@@ -158,23 +220,15 @@ const Search= () => {
 
         <button
           onClick={handleSubmit}
-          style={{
-            padding: "0.5rem",
-            width: "100%",
-            background: "#007bff",
-            color: "white",
-            border: "none",
-            borderRadius: 4,
-            cursor: "pointer",
-          }}
+          className="p-2 w-full bg-blue-600 text-white rounded hover:bg-blue-700 transition"
         >
           Submit
         </button>
 
         {distance && duration && (
-          <div style={{ marginTop: "0.5rem" }}>
+          <div className="mt-2 text-sm">
             <strong>Distance:</strong> {distance} km<br />
-            <strong>Time:</strong> {duration} min
+            <strong>Time:</strong> {duration}
           </div>
         )}
       </div>
@@ -182,7 +236,7 @@ const Search= () => {
       <MapContainer
         center={[28.6139, 77.209]}
         zoom={zoomLevel}
-        style={{ height: "100vh", width: "100%" }}
+        style={{ height: '100%', width: "100%",overflow: "hidden" }}
         whenCreated={(mapInstance) => {
           mapRef.current = mapInstance;
           mapInstance.on("zoomend", () => setZoomLevel(mapInstance.getZoom()));
@@ -198,13 +252,9 @@ const Search= () => {
         {route.length > 0 && <Polyline positions={route} color="blue" />}
         <FlyTo position={startPoint || endPoint} />
       </MapContainer>
-    </>
+    </div>
   );
 };
 
 export default Search;
-
-
-
-
 
