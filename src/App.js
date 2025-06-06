@@ -32,10 +32,18 @@ function App() {
         <Route path='/' element={<Start city={city} onDatachange={handleChange} />} />
         <Route path='/register' element={<Register setLogin={setLogin}/>}/>
         <Route path='/login' element={<Login setLogin={setLogin}/>}/>
-        <Route path='/home' element={<Home  city={city}/>} />
-        <Route path='/search' element={<Search/>}/>
-        <Route path='/delhi' element={<Delhi/>}/>
-        <Route path='/profile' element= {<Profle/>}/>
+       { isloggedIn &&
+        <Route path='/home' element={<Home  city={city}/>} /> 
+       }
+        { isloggedIn &&
+        <Route path='/search' element={<Search city={city}/>} />
+       }
+        { isloggedIn &&
+        <Route path='/profile' element={<Profle />} />
+       }
+        { isloggedIn &&
+        <Route path='/delhi' element={<Delhi />} />
+       }
       </Routes>
       </div> 
 

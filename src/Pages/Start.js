@@ -46,16 +46,16 @@ const Start = ({ city, onDatachange }) => {
 
     return (
         <div className=" h-screen">
-            <div className='w-[100%] h-screen relative flex justify-center items-center'>
+            <div className='w-[100%] h-screen relative overflow-hidden flex justify-center items-center'>
                 <WorldMap />
                 <div className='absolute flex flex-col gap-[15px] w-full justify-center items-center z-10'>
-                    <h1 className='text-5xl font-bold'>
+                    <h1 className='text-4xl sm:text-5xl md:text-5xl lg:text-5xl font-bold flex justify-center items-center w-[100%]'>
                         Welcome to RouteWizard
                     </h1>
-                    <form className='flex flex-col gap-[10px] justify-center items-center w-[60%]' onSubmit={submitHandler}>
+                    <form className='flex flex-col gap-[10px] justify-center items-center w-[60%] min-w-[300px]' onSubmit={submitHandler}>
                         <input placeholder='Enter your location' className='p-[5px] rounded-full text-center w-[100%] text-black border-none'
                              name="city" id="city" value={location.city} onChange={changeHandler} />
-                        <button className='bg-blue-500  hover:bg-blue-600 text-white rounded-full py-[8px] w-[30%]'>Get Started</button>
+                        <button className='bg-blue-500  hover:bg-blue-600 text-white rounded-full py-[8px] w-[33%]'>Get Started</button>
                     </form>
                 </div>
             </div>

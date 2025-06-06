@@ -16,7 +16,7 @@ const ChangeMapView = ({ coords }) => {
 };
 
 const Map = ({ city }) => {
-  const [data, setData] = useState([]);
+  // const [data, setData] = useState([]);
   const [position, setPosition] = useState([51.5072, -0.1276]); // default to London
 
   useEffect(() => {
@@ -33,7 +33,7 @@ const Map = ({ city }) => {
         if (result && result.length > 0) {
           const lat = parseFloat(result[0].lat);
           const lon = parseFloat(result[0].lon);
-          setData(result);
+          // setData(result);
           setPosition([lat, lon]);
         }
       } catch (error) {
@@ -47,7 +47,7 @@ const Map = ({ city }) => {
   }, [city]);
 
   return (
-    <div style={{ height: '100vh', width: '60%' }}>
+    <div style={{ height: '100vh', width: '100%' }}>
       <MapContainer center={position} zoom={13} scrollWheelZoom={true} style={{ height: '100%', width: '100%' }}>
         <ChangeMapView coords={position} /> {/* This will center the map on the new position */}
         <TileLayer
