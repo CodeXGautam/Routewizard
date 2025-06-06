@@ -103,15 +103,15 @@ const Login = (props) => {
                 <img src={mapImage} alt="Map" className="w-full h-[100%] object-cover opacity-20 absolute" />
                 <div className="flex flex-col items-center p-6 gap-3 bg-white bg-opacity-30 rounded-lg shadow-lg w-[35%] min-w-[300px] z-10">
                     <div className="flex flex-col items-center gap-2">
-                        <h1 className="font-bold text-2xl sm:text-2xl md:text-3xl lg:text-4xl">Welcome Back !</h1>
-                        <p className="text-gray-700 text-sm sm:text-md md:text-md lg:text-md">Hey, glad to see you back here</p>
+                        <h1 className="font-bold text-3xl sm:text-3xl md:text-3xl lg:text-4xl">Welcome Back !</h1>
+                        <p className="text-gray-700 text-md sm:text-md md:text-md lg:text-lg">Hey, glad to see you back here</p>
                     </div>
                     <form className="flex flex-col gap-4 w-[100%] mt-0" onSubmit={submitHandler}>
                         <input type="email" placeholder="Email" value={loginData.email} id="email" name="email"
                             className="text-gray-900 border-2 border-gray-600 p-2 rounded-md" onChange={changeHandler} />
                         <input type="password" placeholder="Password" value={loginData.password} name="password" id="password"
                             className="text-gray-900 border-2 border-gray-600 p-2 rounded-md" onChange={changeHandler} />
-                        <span className="text-sm text-gray-800">Do not have an account?
+                        <span className="text-md text-gray-800">Do not have an account?
                             <NavLink to={'/register'} className="text-blue-400 font-semibold"> Register Now</NavLink>
                         </span>
                         <button className="text-md font-semibold bg-blue-500 rounded-lg p-3 text-white"> Login </button>

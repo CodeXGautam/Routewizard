@@ -181,7 +181,7 @@ const Register = (props) => {
                         <input type="password" onChange={changeHandler} name="confirmPassword" id="confirmPassword" value={registerData.confirmPassword}
                             className="text-gray-900 border-2 border-gray-600 p-2 rounded-md" />
                     </label>
-                    <span className="text-sm text-gray-800">Already have a account ? <NavLink to={'/login'} className="text-blue-400 font-semibold">Login</NavLink></span>
+                    <span className="text-md text-gray-800">Already have a account ? <NavLink to={'/login'} className="text-blue-400 font-semibold">Login</NavLink></span>
                     <button className="text-md font-semibold bg-blue-500 rounded-lg p-3 text-white"> Register </button>
                 </form>
             </div>
