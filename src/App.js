@@ -21,17 +21,17 @@ function App() {
   }
 
   return (
-    <div className="flex flex-col overflow-auto h-screen w-[100%]">
-      <div className='w-[100%] h-[8.5%]'>
+    <div className="flex flex-col h-screen w-[100%]">
+      <div className='w-[100%]'>
         <Navbar isloggedIn={isloggedIn} setLogin={setLogin}/>
       </div>
 
-      <div className='h-[100%] w-[100%]'>
+      <div className='h-screen w-[100%]'>
       <Routes>
-        <Route path= '*' element={<Start city={city} onDatachange={handleChange} />}/>
+        <Route path= '*' element={<Start city={city} isloggedIn={isloggedIn} onDatachange={handleChange} />}/>
         <Route path='/' element={<Start city={city} onDatachange={handleChange} />} />
-        <Route path='/register' element={<Register setLogin={setLogin} />}/>
-        <Route path='/login' element={<Login setLogin={setLogin}/>}/>
+        <Route path='/register' element={<Register setLogin={setLogin}  />}/>
+        <Route path='/login' element={<Login setLogin={setLogin} />}/>
        { isloggedIn &&
         <Route path='/home' element={<Home  city={city}/>} /> 
        }

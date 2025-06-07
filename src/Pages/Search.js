@@ -6,12 +6,9 @@ import {
   Polyline,
   useMap,
 } from "react-leaflet";
-import axios from "axios";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-
-const graphhopperKey = "6938c1a9-4599-466e-9be6-38541a31ba8b";
-const tomtomKey = "eBXfQnGsEtybJGPcFdG1VKTSBk8LCqIE";
+import toast from "react-hot-toast";
 
 const customIcon = new L.Icon({
   iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
@@ -28,31 +25,46 @@ const FlyTo = ({ position }) => {
 };
 
 const nominatimGeocode = async (query) => {
-  const res = await axios.get("https://nominatim.openstreetmap.org/search", {
-    params: { q: query, format: "json", limit: 1 },
-  });
-
-  if (res.data.length > 0) {
-    const { lat, lon } = res.data[0];
+  const res = await fetch(`http://localhost:4000/api/geocode?q=${encodeURIComponent(query)}`);
+  const data = await res.json();
+  if (data.length > 0) {
+    const { lat, lon } = data[0];
     return { lat: parseFloat(lat), lng: parseFloat(lon) };
   }
   return null;
 };
 
-const fetchSuggestions = async (query) => {
-  if (!query) return [];
-  const res = await axios.get("https://nominatim.openstreetmap.org/search", {
-    params: {
-      q: query,
-      format: "json",
-      addressdetails: 1,
-      limit: 5,
-    },
-  });
-  return res.data;
+const nominatimAutocomplete = async (query) => {
+  const res = await fetch(`http://localhost:4000/api/autocomplete?q=${encodeURIComponent(query)}`);
+  const data = await res.json();
+  return data;
 };
 
-const Search = () => {
+const fetchRouteFromBackend = async (start, end, vehicle, routePref) => {
+  const res = await fetch("http://localhost:4000/api/route", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ start, end, vehicle, routePref }),
+  });
+  return res.json();
+};
+
+const formatDuration = (milliseconds) => {
+  let minutes = Math.floor(milliseconds / 60000);
+  if (minutes < 60) return `${minutes} min`;
+  const hours = Math.floor(minutes / 60);
+  minutes = minutes % 60;
+  if (hours < 24) return `${hours} hr ${minutes} min`;
+  const days = Math.floor(hours / 24);
+  const remainingHours = hours % 24;
+  return `${days} day ${remainingHours} hr ${minutes} min`;
+};
+
+const Search = (props) => {
+
+
+  const user = props.user;
+
   const [startQuery, setStartQuery] = useState("");
   const [endQuery, setEndQuery] = useState("");
   const [startSuggestions, setStartSuggestions] = useState([]);
@@ -65,8 +77,7 @@ const Search = () => {
   const [trafficTilesUrl, setTrafficTilesUrl] = useState("");
   const [distance, setDistance] = useState(null);
   const [duration, setDuration] = useState(null);
-  const [zoomLevel, setZoomLevel] = useState(14);
-
+  const [zoomLevel, setZoomLevel] = useState(12);
   const mapRef = useRef();
 
   const handleSubmit = async () => {
@@ -77,43 +88,46 @@ const Search = () => {
     setStartPoint(start);
     setEndPoint(end);
 
-    let weighting = routePref === "shortest" ? "shortest" : "fastest";
-    let params = `point=${start.lat},${start.lng}&point=${end.lat},${end.lng}&vehicle=${vehicle}&locale=en&weighting=${weighting}&calc_points=true&points_encoded=false&key=${graphhopperKey}`;
-
     try {
-      const url = `https://graphhopper.com/api/1/route?${params}`;
-      const res = await axios.get(url);
-      const path = res.data.paths[0];
+      const data = await fetchRouteFromBackend(start, end, vehicle, routePref);
+      const path = data.paths[0];
       const coords = path.points.coordinates.map(([lng, lat]) => [lat, lng]);
       setRoute(coords);
       setDistance((path.distance / 1000).toFixed(2));
+      setDuration(formatDuration(path.time));
 
-      // Format duration nicely
-      const totalMs = path.time;
-      const hours = Math.floor(totalMs / (1000 * 60 * 60));
-      const minutes = Math.round((totalMs % (1000 * 60 * 60)) / (1000 * 60));
-      const formattedDuration = hours > 0 ? `${hours} hr ${minutes} min` : `${minutes} min`;
-      setDuration(formattedDuration);
-
-      // Traffic overlay
       if (routePref === "least_traffic" && mapRef.current) {
         const center = mapRef.current.getCenter();
         const z = zoomLevel;
-        const x = Math.floor(((center.lng + 180) / 360) * Math.pow(2, z));
+        const x = Math.floor(((center.lng + 180) / 360) * 2 ** z);
         const y = Math.floor(
           (1 -
             Math.log(
               Math.tan((center.lat * Math.PI) / 180) +
-              1 / Math.cos((center.lat * Math.PI) / 180)
+                1 / Math.cos((center.lat * Math.PI) / 180)
             ) /
-            Math.PI) / 2 *
-          Math.pow(2, z)
+              Math.PI) /
+            2 *
+            2 ** z
         );
-        setTrafficTilesUrl(
-          `https://api.tomtom.com/traffic/map/4/tile/flow/relative0/${z}/${x}/${y}.png?key=${tomtomKey}`
-        );
+        setTrafficTilesUrl(`http://localhost:4000/api/traffic-tile/${z}/${x}/${y}`);
       } else {
         setTrafficTilesUrl("");
+      }
+
+      const saveRes = await fetch("http://localhost:4000/api/search", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ start: startQuery, end: endQuery, vehicle, routePref , user}),
+      });
+      const saveData = await saveRes.json();
+
+      if (saveData.message === "All fields are required") {
+        toast.error("All fields are required. Please fill in all fields.");
+      } else if (saveData.message === "Search history created successfully") {
+        console.log("Search history created successfully.");
+      } else {
+        console.error("Unexpected response:", saveData.message);
       }
     } catch (err) {
       console.error("Routing error:", err);
@@ -124,31 +138,41 @@ const Search = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       if (routePref === "least_traffic" && trafficTilesUrl) {
-        setTrafficTilesUrl((prevUrl) => `${prevUrl.split("&refresh")[0]}&refresh=${new Date().getTime()}`);
+        setTrafficTilesUrl(
+          (prevUrl) => `${prevUrl.split("?refresh")[0]}?refresh=${new Date().getTime()}`
+        );
       }
     }, 30000);
     return () => clearInterval(interval);
   }, [routePref, trafficTilesUrl]);
 
   useEffect(() => {
-    const delayDebounce = setTimeout(() => {
-      fetchSuggestions(startQuery).then(setStartSuggestions);
-    }, 300);
-    return () => clearTimeout(delayDebounce);
-  }, [startQuery]);
+    const fetchSuggestions = async () => {
+      if (startQuery.length > 2) {
+        const results = await nominatimAutocomplete(startQuery);
+        setStartSuggestions(results);
+      } else {
+        setStartSuggestions([]);
+      }
 
-  useEffect(() => {
-    const delayDebounce = setTimeout(() => {
-      fetchSuggestions(endQuery).then(setEndSuggestions);
-    }, 300);
-    return () => clearTimeout(delayDebounce);
-  }, [endQuery]);
+      if (endQuery.length > 2) {
+        const results = await nominatimAutocomplete(endQuery);
+        setEndSuggestions(results);
+      } else {
+        setEndSuggestions([]);
+      }
+    };
+
+    const timeout = setTimeout(fetchSuggestions, 300);
+    return () => clearTimeout(timeout);
+  }, [startQuery, endQuery]);
 
   return (
-    <div className="relative w-[100%] h-screen overflow-hidden">
-      <div className="absolute top-[30px] right-[10px] z-[1000] bg-white p-4 rounded-lg shadow-lg max-w-[300px] w-[30%] min-w-[180px] overflow-hidden">
-        
-        <div className="">
+    <div className="relative w-[100%] h-screen">
+     
+      <div className="absolute top-[20px] right-[10px] z-[1000] bg-white p-4 rounded-lg shadow-lg max-w-[300px] min-w-[180px] 
+      hidden sm:w-[34%] sm:flex-col sm:flex md:w-[34%] md:flex-col md:flex lg:w-[34%] lg:flex-col lg:flex overflow-y-auto">
+        <div>
           <input
             placeholder="Start location"
             value={startQuery}
@@ -156,11 +180,11 @@ const Search = () => {
             className="mb-2 p-2 w-full border border-gray-300 rounded"
           />
           {startSuggestions.length > 0 && (
-            <ul className="absolute z-10 bg-white border w-full max-h-40 overflow-y-auto shadow">
+            <ul className="absolute z-10 bg-white border w-full rounded shadow">
               {startSuggestions.map((s, idx) => (
                 <li
                   key={idx}
-                  className="px-2 py-1 hover:bg-gray-200 cursor-pointer text-sm"
+                  className="px-2 py-1 hover:bg-gray-100 cursor-pointer text-sm"
                   onClick={() => {
                     setStartQuery(s.display_name);
                     setStartSuggestions([]);
@@ -181,11 +205,11 @@ const Search = () => {
             className="mb-2 p-2 w-full border border-gray-300 rounded"
           />
           {endSuggestions.length > 0 && (
-            <ul className="absolute z-10 bg-white border w-full max-h-40 overflow-y-auto shadow">
+            <ul className="absolute z-10 bg-white border w-full rounded shadow">
               {endSuggestions.map((s, idx) => (
                 <li
                   key={idx}
-                  className="px-2 py-1 hover:bg-gray-200 cursor-pointer text-sm"
+                  className="px-2 py-1 hover:bg-gray-100 cursor-pointer text-sm"
                   onClick={() => {
                     setEndQuery(s.display_name);
                     setEndSuggestions([]);
@@ -232,14 +256,15 @@ const Search = () => {
           </div>
         )}
       </div>
-
       <MapContainer
         center={[28.6139, 77.209]}
         zoom={zoomLevel}
-        style={{ height: '100%', width: "100%",overflow: "hidden" }}
+        className="w-full h-screen"
         whenCreated={(mapInstance) => {
           mapRef.current = mapInstance;
-          mapInstance.on("zoomend", () => setZoomLevel(mapInstance.getZoom()));
+          mapInstance.on("zoomend", () =>
+            setZoomLevel(mapInstance.getZoom())
+          );
         }}
       >
         <TileLayer
@@ -257,4 +282,3 @@ const Search = () => {
 };
 
 export default Search;
-

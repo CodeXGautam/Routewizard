@@ -6,6 +6,7 @@ import { toast } from "react-hot-toast";
 
 
 
+
 const Login = (props) => {
 
     const url = 'http://localhost:4000/'
@@ -74,8 +75,9 @@ const Login = (props) => {
                         return;
                     }
 
-                    else if (response.message === "Login successful") {
+                    else {
                         toast.success("Login successful");
+                        console.log('Login successful:', response);
                         setLogin(true);
                         navigate('/home');
                         setLoginData({
@@ -83,10 +85,7 @@ const Login = (props) => {
                             password: ""
                         });
 
-                    } else {
-                        toast.error("Login failed");
-                        console.error("Login failed:", response.message);
-                    }
+                    } 
                 })
                 .catch(error => {
                     toast.error("An error occurred during login");

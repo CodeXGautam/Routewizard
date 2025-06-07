@@ -5,12 +5,14 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 
-const Start = ({ city, onDatachange }) => {
+const Start = ({ city, onDatachange , isloggedIn}) => {
 
     const [location, setLocation] = useState({
         city: '',
     }
     )
+
+
 
     const navigate = useNavigate();
 
@@ -36,9 +38,15 @@ const Start = ({ city, onDatachange }) => {
             return;
         }
         else {
-            console.log('Button pressed');
-            onDatachange(location.city)
-            navigate('/register');
+            if (isloggedIn) {
+                console.log('Button pressed');
+                onDatachange(location.city)
+                navigate('/home');  
+            } 
+            else {
+                toast.success("Please register or login to continue");
+                navigate('/register');
+            }
         }
         // fetchData();
 
